@@ -6,7 +6,7 @@ async function handleInboundEmail(req, res) {
 
   const { sender, recipient, subject, "body-plain": bodyPlain, "body-html": bodyHtml } = req.body;
 
-  if (!sender || !bodyPlain) {
+  if (!sender || (!bodyPlain && !bodyHtml)) {
     console.warn("Received incomplete email payload", { sender, subject });
     return;
   }
