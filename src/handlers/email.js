@@ -7,6 +7,11 @@ async function handleInboundEmail(req, res) {
   // Acknowledge Mailgun immediately — it retries if it doesn't get 200 quickly
   res.sendStatus(200);
 
+  if (!req.body) {
+    console.warn("[email] req.body is undefined — check body parser middleware");
+    return;
+  }
+
   const { sender, recipient, subject, "body-plain": bodyPlain, "body-html": bodyHtml } = req.body;
 
   // ── Relay monitor@ emails to the LatAm Macro Monitor backend ─────────────
