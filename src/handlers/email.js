@@ -16,20 +16,15 @@ async function handleInboundEmail(req, res) {
 
   // ── Relay monitor@ emails to the LatAm Macro Monitor backend ─────────────
   if (recipient && recipient.includes(MONITOR_RECIPIENT)) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5_000);
-      await fetch(MONITOR_WEBHOOK, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(req.body),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      console.log(`[relay] forwarded monitor@ email to LatAm Macro Monitor — subject: ${subject}`);
-    } catch (err) {
-      console.error(`[relay] failed to forward monitor@ email — ${err.message}`);
-    }
+    console.log(`[relay] firing monitor@ relay — subject: ${subject}`);
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 5_000);
+    fetch(MONITOR_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+      signal: controller.signal,
+    }).catch(err => console.error(`[relay] failed — ${err.message}`));
     return;
   }
   // ─────────────────────────────────────────────────────────────────────────
